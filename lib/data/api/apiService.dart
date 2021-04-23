@@ -3,12 +3,12 @@ import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 part 'apiService.g.dart';
 
-@RestApi(baseUrl: 'http://localhost:8000/api/v1/')
+@RestApi(baseUrl: 'http://192.168.100.27:8000/api/v1/')
 abstract class ApiService {
   // factory ApiService(Dio dio) => _ApiService(dio);
   factory ApiService(Dio dio) = _ApiService;
   @GET('contact_list')
-  Future<List<Contact>> getContact();
+  Future<List<Contact>> getContact({@DioOptions() Options options});
 
   @POST('add_contact')
   Future<Contact> addContact(@Body() Contact contact);

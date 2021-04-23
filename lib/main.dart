@@ -1,3 +1,5 @@
+import 'package:dio_flutter_transformer/dio_flutter_transformer.dart';
+import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:oversea_app/bloc/get/cubit/getcontact_cubit.dart';
 import 'package:oversea_app/data/api/apiService.dart';
 import 'package:oversea_app/data/repository/auth_repository.dart';
@@ -34,9 +36,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Dio dio = Dio();
+    dio.interceptors
+        .add(LogInterceptor(responseBody: true, logPrint: (log) => print(log)));
     ApiService apiService = ApiService(dio);
+    dio.transformer = FlutterTransformer();
+    dio.interceptors.add(DioCacheManager(
+            CacheConfig(baseUrl: 'http://192.168.100.27:8000/api/v1/'))
+        .interceptor);
     Get.put(apiService);
-    return MaterialApp(
+
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       locale: const Locale('mn', 'MN'),
       theme: ThemeData(
@@ -46,8 +55,8 @@ class MyApp extends StatelessWidget {
       home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
           if (state is AuthenticationAuthenticated) {
-            return GetMaterialApp(
-              home: BlocProvider<GetcontactCubit>(
+            return Scaffold(
+              body: BlocProvider<GetcontactCubit>(
                 create: (context) => getIt.call(),
                 child: Home(),
               ),

@@ -5,7 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthapiRepository {
   // static String mainUrl = "http://localhost:8000/api/v1/";
-  var loginUrl = 'http://localhost:8000/api/v1/auth/login';
+  var loginUrl = 'http://192.168.100.27:8000/api/v1/auth/login';
   final AuthapiService _authapiService;
   AuthapiRepository(this._authapiService);
 

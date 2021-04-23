@@ -9,7 +9,7 @@ part of 'apiService.dart';
 class _ApiService implements ApiService {
   _ApiService(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://localhost:8000/api/v1/';
+    baseUrl ??= 'http://192.168.100.27:8000/api/v1/';
   }
 
   final Dio _dio;
@@ -17,17 +17,17 @@ class _ApiService implements ApiService {
   String baseUrl;
 
   @override
-  Future<List<Contact>> getContact() async {
+  Future<List<Contact>> getContact({options}) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
+    final newOptions = newRequestOptions(options);
+    newOptions.extra.addAll(_extra);
+    newOptions.headers.addAll(<String, dynamic>{});
     final _result = await _dio.request<List<dynamic>>('contact_list',
         queryParameters: queryParameters,
-        options: RequestOptions(
-            method: 'GET',
-            headers: <String, dynamic>{},
-            extra: _extra,
-            baseUrl: baseUrl),
+        options: newOptions.merge(method: 'GET', baseUrl: baseUrl),
         data: _data);
     var value = _result.data
         .map((dynamic i) => Contact.fromJson(i as Map<String, dynamic>))
@@ -92,5 +92,29 @@ class _ApiService implements ApiService {
         data: _data);
     final value = Contact.fromJson(_result.data);
     return value;
+  }
+
+  RequestOptions newRequestOptions(Options options) {
+    if (options is RequestOptions) {
+      return options;
+    }
+    if (options == null) {
+      return RequestOptions();
+    }
+    return RequestOptions(
+      method: options.method,
+      sendTimeout: options.sendTimeout,
+      receiveTimeout: options.receiveTimeout,
+      extra: options.extra,
+      headers: options.headers,
+      responseType: options.responseType,
+      contentType: options.contentType.toString(),
+      validateStatus: options.validateStatus,
+      receiveDataWhenStatusError: options.receiveDataWhenStatusError,
+      followRedirects: options.followRedirects,
+      maxRedirects: options.maxRedirects,
+      requestEncoder: options.requestEncoder,
+      responseDecoder: options.responseDecoder,
+    );
   }
 }

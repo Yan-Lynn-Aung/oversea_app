@@ -1,3 +1,4 @@
+import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:oversea_app/bloc/auth_bloc/bloc/auth.dart';
 import 'package:oversea_app/bloc/auth_bloc/bloc/auth_bloc.dart';
 import 'package:oversea_app/bloc/get/cubit/getcontact_cubit.dart';
@@ -12,14 +13,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'EditContact_screen.dart';
+import 'package:dio/dio.dart';
 import 'package:oversea_app/style/theme.dart' as Style;
 
 class Home extends StatelessWidget {
   ApiService apiService = Get.find();
   @override
   Widget build(BuildContext context) {
-    // Options options = buildCacheOptions(Duration(days: 10), forceRefresh: true);
-    // Get.put(options);
+    Options options = buildCacheOptions(Duration(days: 10), forceRefresh: true);
+    Get.put(options);
 
     // BlocProvider.of<GetcontactCubit>(context).getContact();
     return Scaffold(
@@ -58,16 +60,20 @@ class Home extends StatelessWidget {
       ),
       body: BlocBuilder<GetcontactCubit, GetcontactState>(
         builder: (context, state) {
-          if (state is GetcontactSuccess) {
-            List<Contact> contacts = state.contacts;
-            return ListView.builder(
-                itemCount: contacts.length,
-                itemBuilder: (context, position) {
-                  return item(contacts[position], context);
-                  // return ContactList(contacts[position],context);
-                });
-          }
-          return Center(child: CircularProgressIndicator());
+          return FutureBuilder(
+              future: apiService.getContact(options: options),
+              builder: (context, snapshot) {
+                if (state is GetcontactSuccess) {
+                  List<Contact> contacts = state.contacts;
+                  return ListView.builder(
+                      itemCount: contacts.length,
+                      itemBuilder: (context, position) {
+                        return item(contacts[position], context);
+                        // return ContactList(contacts[position],context);
+                      });
+                }
+                return Center(child: CircularProgressIndicator());
+              });
         },
       ),
     );
