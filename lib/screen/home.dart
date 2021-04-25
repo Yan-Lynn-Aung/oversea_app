@@ -48,12 +48,12 @@ class Home extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           // Get.to(AddContactScreen());
+
           var result = await Navigator.of(context)
               .push(MaterialPageRoute(builder: (_) => AddContactScreen()));
           if (result != null && result == 'success') {
             BlocProvider.of<GetcontactCubit>(context).getContact();
           }
-          // Get.to(AddContactScreen());
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.pink,

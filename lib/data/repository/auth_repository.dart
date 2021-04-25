@@ -1,4 +1,3 @@
-import 'package:oversea_app/data/api/auth_apiService.dart';
 import 'package:oversea_app/data/model/user.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -6,8 +5,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class AuthapiRepository {
   // static String mainUrl = "http://localhost:8000/api/v1/";
   var loginUrl = 'http://192.168.100.27:8000/api/v1/auth/login';
-  final AuthapiService _authapiService;
-  AuthapiRepository(this._authapiService);
 
   final FlutterSecureStorage storage = new FlutterSecureStorage();
   final Dio _dio = Dio();
@@ -37,6 +34,7 @@ class AuthapiRepository {
       "email": email,
       "password": password,
     });
-    return response.data["token"];
+    final token = response.data['token'];
+    return response.data["access_token"];
   }
 }

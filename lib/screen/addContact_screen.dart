@@ -51,6 +51,7 @@ class AddContactScreen extends StatelessWidget {
                     Text('suceess'),
                     FlatButton(
                         onPressed: () {
+                          // Get.put('success');
                           Navigator.pop(context, 'success');
                         },
                         child: Text('Go Home'))

@@ -5,6 +5,7 @@ import 'package:oversea_app/data/api/apiService.dart';
 import 'package:oversea_app/data/repository/auth_repository.dart';
 import 'package:oversea_app/screen/auth/intro_screen.dart';
 import 'package:oversea_app/screen/home.dart';
+import 'package:oversea_app/screen/public/public_home.dart';
 import 'package:oversea_app/service_locator/module.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +17,7 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
 void main() {
-  final authapiRepository = AuthapiRepository(null);
+  final authapiRepository = AuthapiRepository();
   locator();
   runApp(
     BlocProvider<AuthenticationBloc>(
@@ -36,9 +37,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Dio dio = Dio();
+
     dio.interceptors
         .add(LogInterceptor(responseBody: true, logPrint: (log) => print(log)));
     ApiService apiService = ApiService(dio);
+
     dio.transformer = FlutterTransformer();
     dio.interceptors.add(DioCacheManager(
             CacheConfig(baseUrl: 'http://192.168.100.27:8000/api/v1/'))
@@ -63,7 +66,8 @@ class MyApp extends StatelessWidget {
             );
           }
           if (state is AuthenticationUnauthenticated) {
-            return IntroPage(authapiRepository: authapiRepository);
+            // return IntroPage(authapiRepository: authapiRepository);
+            return PublicHome(authapiRepository: authapiRepository);
           }
           if (state is AuthenticationLoading) {
             return Scaffold(
